@@ -1,10 +1,5 @@
 const { createClient } = require("@supabase/supabase-js");
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_KEY
-);
-
 exports.handler = async (event) => {
 
   if (event.httpMethod !== "GET") {
@@ -13,12 +8,10 @@ exports.handler = async (event) => {
 
   const phone = event.queryStringParameters.phone;
 
-  if (!phone) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: "Phone number required" })
-    };
-  }
+  const supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_KEY
+  );
 
   const { data, error } = await supabase
     .from("bills")
@@ -38,3 +31,4 @@ exports.handler = async (event) => {
     body: JSON.stringify(data)
   };
 };
+    

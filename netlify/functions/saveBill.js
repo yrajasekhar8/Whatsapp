@@ -2,7 +2,6 @@ const { createClient } = require("@supabase/supabase-js");
 
 exports.handler = async (event) => {
 
-  // Allow only POST
   if (event.httpMethod !== "POST") {
     return {
       statusCode: 405,
@@ -10,11 +9,10 @@ exports.handler = async (event) => {
     };
   }
 
-  // Check body exists
   if (!event.body) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ error: "Request body is missing" })
+      body: JSON.stringify({ error: "Missing request body" })
     };
   }
 

@@ -21,7 +21,6 @@ body {
 }
 h3 {
   text-align: center;
-  margin-bottom: 10px;
 }
 input, select, button {
   width: 100%;
@@ -58,8 +57,10 @@ th {
 <body>
 
 <div class="container">
-  <h3>WhatsApp Bill Sender</h3>
 
+  <h3>Send Bill on WhatsApp</h3>
+
+  <!-- NO form submit -->
   <input id="name" placeholder="Customer Name">
   <input id="phone" placeholder="10-digit Mobile Number">
 
@@ -73,19 +74,22 @@ th {
 
   <input id="amount" placeholder="Bill Amount (₹)">
 
-  <button onclick="sendBill()">Save & Send WhatsApp</button>
+  <!-- IMPORTANT: type="button" -->
+  <button type="button" onclick="sendBill()">Save & Send WhatsApp</button>
 
   <hr>
 
   <h3>Check Bill History</h3>
   <input id="historyPhone" placeholder="Enter Mobile Number">
-  <button class="secondary" onclick="getHistory()">Check History</button>
+  <button type="button" class="secondary" onclick="getHistory()">Check History</button>
 
   <div id="history"></div>
+
 </div>
 
 <script>
 async function sendBill() {
+
   const data = {
     name: name.value.trim(),
     phone: phone.value.trim(),
@@ -107,19 +111,55 @@ async function sendBill() {
 
     const result = await res.json();
 
-    // ✅ IMPORTANT CHECK
     if (result.whatsapp) {
       window.location.href = result.whatsapp;
     } else {
-      alert("Failed to generate WhatsApp message.\n" + (result.error || ""));
+      alert(result.error || "Something went wrong");
     }
 
-  } catch (err) {
+  } catch (e) {
     alert("Server error. Please try again.");
   }
 }
-</script>
 
+async function getHistory() {
+  const phone = historyPhone.value.trim();
+  if (!phone) {
+    alert("Enter mobile number");
+    return;
+  }
+
+  const res = await fetch(`/.netlify/functions/getHistory?phone=${phone}`);
+  const data = await res.json();
+
+  if (!data.length) {
+    history.innerHTML = "<p>No records found</p>";
+    return;
+  }
+
+  let html = `
+    <table>
+      <tr>
+        <th>Date</th>
+        <th>Service</th>
+        <th>Amount</th>
+      </tr>
+  `;
+
+  data.forEach(b => {
+    html += `
+      <tr>
+        <td>${new Date(b.created_at).toLocaleDateString()}</td>
+        <td>${b.service}</td>
+        <td>₹${b.amount}</td>
+      </tr>
+    `;
+  });
+
+  html += "</table>";
+  history.innerHTML = html;
+}
+</script>
 
 </body>
 </html>
