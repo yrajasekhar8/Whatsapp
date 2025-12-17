@@ -87,11 +87,20 @@ async function sendBill() {
 
     const result = await response.json();
 
-    if (result.whatsapp) {
-      // ✅ OPEN WHATSAPP IN NEW TAB
-      window.open(result.whatsapp, "_blank");
-    } else {
+    if (!result.whatsapp) {
       alert(result.error || "Failed to open WhatsApp");
+      return;
+    }
+
+    // ✅ Detect mobile vs desktop
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    if (isMobile) {
+      // 📱 Mobile → same page
+      window.location.href = result.whatsapp;
+    } else {
+      // 💻 Laptop/Desktop → new tab
+      window.open(result.whatsapp, "_blank");
     }
 
   } catch (err) {
