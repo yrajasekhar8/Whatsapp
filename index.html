@@ -88,9 +88,10 @@ async function sendBill() {
     const result = await response.json();
 
     if (result.whatsapp) {
-      window.location.href = result.whatsapp;
+      // ✅ OPEN WHATSAPP IN NEW TAB
+      window.open(result.whatsapp, "_blank");
     } else {
-      alert(result.error || "Failed to send message");
+      alert(result.error || "Failed to open WhatsApp");
     }
 
   } catch (err) {
@@ -98,6 +99,7 @@ async function sendBill() {
   }
 }
 </script>
+
 
 </body>
 </html>
