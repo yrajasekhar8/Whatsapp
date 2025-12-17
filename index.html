@@ -87,57 +87,39 @@ th {
 <script>
 async function sendBill() {
   const data = {
-    name: name.value,
-    phone: phone.value,
+    name: name.value.trim(),
+    phone: phone.value.trim(),
     service: service.value,
-    amount: amount.value
+    amount: amount.value.trim()
   };
 
-  const res = await fetch("/.netlify/functions/saveBill", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  });
-
-  const result = await res.json();
-  window.location.href = result.whatsapp;
-}
-
-async function getHistory() {
-  const phone = document.getElementById("historyPhone").value;
-  if (!phone) return alert("Enter phone number");
-
-  const res = await fetch(`/.netlify/functions/getHistory?phone=${phone}`);
-  const data = await res.json();
-
-  if (data.length === 0) {
-    history.innerHTML = "<p>No records found</p>";
+  if (!data.name || !data.phone || !data.service || !data.amount) {
+    alert("Please fill all details");
     return;
   }
 
-  let html = `
-    <table>
-      <tr>
-        <th>Date</th>
-        <th>Service</th>
-        <th>Amount</th>
-      </tr>
-  `;
+  try {
+    const res = await fetch("/.netlify/functions/saveBill", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
 
-  data.forEach(b => {
-    html += `
-      <tr>
-        <td>${new Date(b.created_at).toLocaleDateString()}</td>
-        <td>${b.service}</td>
-        <td>₹${b.amount}</td>
-      </tr>
-    `;
-  });
+    const result = await res.json();
 
-  html += "</table>";
-  history.innerHTML = html;
+    // ✅ IMPORTANT CHECK
+    if (result.whatsapp) {
+      window.location.href = result.whatsapp;
+    } else {
+      alert("Failed to generate WhatsApp message.\n" + (result.error || ""));
+    }
+
+  } catch (err) {
+    alert("Server error. Please try again.");
+  }
 }
 </script>
+
 
 </body>
 </html>
