@@ -1,100 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>WhatsApp Billing</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <title>WhatsApp Bill Sender</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f4f6f8;
-  padding: 20px;
-}
-.container {
-  max-width: 420px;
-  background: #fff;
-  padding: 20px;
-  margin: auto;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-h3 {
-  text-align: center;
-}
-input, select, button {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-}
-button {
-  background: #25D366;
-  color: white;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
-}
-button.secondary {
-  background: #007bff;
-}
-table {
-  width: 100%;
-  margin-top: 15px;
-  border-collapse: collapse;
-  font-size: 13px;
-}
-th, td {
-  border: 1px solid #ddd;
-  padding: 6px;
-  text-align: center;
-}
-th {
-  background: #f1f1f1;
-}
-</style>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .box {
+      background: #ffffff;
+      padding: 20px;
+      width: 340px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    h3 {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    button {
+      background: #25D366;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="container">
-
+<div class="box">
   <h3>Send Bill on WhatsApp</h3>
 
-  <!-- NO form submit -->
-  <input id="name" placeholder="Customer Name">
-  <input id="phone" placeholder="10-digit Mobile Number">
+  <input type="text" id="name" placeholder="Customer Name">
+  <input type="number" id="phone" placeholder="10-digit Mobile Number">
 
   <select id="service">
     <option value="">Select Service</option>
-    <option>Grocery</option>
-    <option>Vegetables</option>
-    <option>Fruits</option>
-    <option>Dairy</option>
+    <option value="Grocery">Grocery</option>
+    <option value="Vegetables">Vegetables</option>
+    <option value="Fruits">Fruits</option>
+    <option value="Dairy">Dairy</option>
   </select>
 
-  <input id="amount" placeholder="Bill Amount (₹)">
+  <input type="number" id="amount" placeholder="Bill Amount (₹)">
 
-  <!-- IMPORTANT: type="button" -->
+  <!-- IMPORTANT -->
   <button type="button" onclick="sendBill()">Save & Send WhatsApp</button>
-
-  <hr>
-
-  <h3>Check Bill History</h3>
-  <input id="historyPhone" placeholder="Enter Mobile Number">
-  <button type="button" class="secondary" onclick="getHistory()">Check History</button>
-
-  <div id="history"></div>
-
 </div>
 
 <script>
 async function sendBill() {
 
   const data = {
-    name: name.value.trim(),
-    phone: phone.value.trim(),
-    service: service.value,
-    amount: amount.value.trim()
+    name: document.getElementById("name").value.trim(),
+    phone: document.getElementById("phone").value.trim(),
+    service: document.getElementById("service").value,
+    amount: document.getElementById("amount").value.trim()
   };
 
   if (!data.name || !data.phone || !data.service || !data.amount) {
@@ -103,61 +79,23 @@ async function sendBill() {
   }
 
   try {
-    const res = await fetch("/.netlify/functions/saveBill", {
+    const response = await fetch("/.netlify/functions/saveBill", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)
     });
 
-    const result = await res.json();
+    const result = await response.json();
 
     if (result.whatsapp) {
       window.location.href = result.whatsapp;
     } else {
-      alert(result.error || "Something went wrong");
+      alert(result.error || "Failed to send message");
     }
 
-  } catch (e) {
+  } catch (err) {
     alert("Server error. Please try again.");
   }
-}
-
-async function getHistory() {
-  const phone = historyPhone.value.trim();
-  if (!phone) {
-    alert("Enter mobile number");
-    return;
-  }
-
-  const res = await fetch(`/.netlify/functions/getHistory?phone=${phone}`);
-  const data = await res.json();
-
-  if (!data.length) {
-    history.innerHTML = "<p>No records found</p>";
-    return;
-  }
-
-  let html = `
-    <table>
-      <tr>
-        <th>Date</th>
-        <th>Service</th>
-        <th>Amount</th>
-      </tr>
-  `;
-
-  data.forEach(b => {
-    html += `
-      <tr>
-        <td>${new Date(b.created_at).toLocaleDateString()}</td>
-        <td>${b.service}</td>
-        <td>₹${b.amount}</td>
-      </tr>
-    `;
-  });
-
-  html += "</table>";
-  history.innerHTML = html;
 }
 </script>
 
