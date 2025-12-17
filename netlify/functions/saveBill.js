@@ -1,13 +1,30 @@
 const { createClient } = require("@supabase/supabase-js");
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_KEY
-);
-
 exports.handler = async (event) => {
+
+  // Allow only POST
+  if (event.httpMethod !== "POST") {
+    return {
+      statusCode: 405,
+      body: JSON.stringify({ error: "Use POST method" })
+    };
+  }
+
+  // Check body exists
+  if (!event.body) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: "Request body is missing" })
+    };
+  }
+
   try {
     const { name, phone, service, amount } = JSON.parse(event.body);
+
+    const supabase = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_KEY
+    );
 
     const { error } = await supabase.from("bills").insert([
       { customer_name: name, phone, service, amount }
@@ -27,6 +44,7 @@ exports.handler = async (event) => {
         whatsapp: `https://wa.me/91${phone}?text=${encodeURIComponent(message)}`
       })
     };
+
   } catch (err) {
     return {
       statusCode: 500,
