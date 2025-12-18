@@ -29,17 +29,27 @@ exports.handler = async (event) => {
     ]);
 
     if (error) throw error;
-  const googleReviewLink = "https://g.page/r/XXXXXXX/review";
+const googleReviewLink = "https://g.page/r/XXXXXXX/review";
 
-  const message =
-    `🙏 Hi ${name},\n\n` +
-    `🧾 *Service*: ${service}\n` +
-    `💰 *Bill Amount*: ₹${amount}\n\n` +
-    `Thank you for choosing *Sekhar Store* 🏪\n` +
-    `We truly appreciate your support 😊\n\n` +
-    `⭐ Please share your Google review:\n` +
-    `${googleReviewLink}\n\n` +
-    `Have a great day! 🌸`;
+// Emoji-safe Unicode characters
+const PRAY = "\u{1F64F}";
+const RECEIPT = "\u{1F9FE}";
+const MONEY = "\u{1F4B0}";
+const STORE = "\u{1F3EA}";
+const SMILE = "\u{1F60A}";
+const STAR = "\u{2B50}";
+const FLOWER = "\u{1F338}";
+
+const message =
+  `${PRAY} Hi ${name},\n\n` +
+  `${RECEIPT} *Service*: ${service}\n` +
+  `${MONEY} *Bill Amount*: ₹${amount}\n\n` +
+  `Thank you for choosing *Sekhar Store* ${STORE}\n` +
+  `We truly appreciate your support ${SMILE}\n\n` +
+  `${STAR} Please share your Google review:\n` +
+  `${googleReviewLink}\n\n` +
+  `Have a great day! ${FLOWER}`;
+
 
 
     return {
