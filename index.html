@@ -1,166 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Bill Generator</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <title>WhatsApp Message Trigger</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f4f6f8;
-  padding: 20px;
-}
-
-.container {
-  max-width: 420px;
-  margin: auto;
-  background: #ffffff;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-
-h3 {
-  text-align: center;
-}
-
-input, select, button {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-  font-size: 14px;
-}
-
-button {
-  background: #25D366;
-  color: white;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-button.secondary {
-  background: #007bff;
-}
-
-#bill {
-  display: none;
-  margin-top: 20px;
-}
-
-/* Bill preview */
-.bill-card {
-  background: linear-gradient(135deg, #25D366, #128C7E);
-  color: white;
-  padding: 16px;
-  border-radius: 12px;
-  text-align: center;
-}
-
-.bill-card h2 {
-  margin: 6px 0;
-}
-
-.bill-card p {
-  margin: 6px 0;
-  font-size: 15px;
-}
-
-canvas {
-  display: none;
-}
-</style>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .box {
+      background: #ffffff;
+      padding: 20px;
+      width: 340px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    h3 {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    button {
+      background: #25D366;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="container">
-  <h3>🧾 Bill Generator</h3>
+<div class="box">
+  <h3>Send Bill on WhatsApp</h3>
 
-  <input id="name" placeholder="Customer Name">
-  <input id="phone" placeholder="10-digit Mobile Number">
+  <input type="text" id="name" placeholder="Customer Name">
+  <input type="number" id="phone" placeholder="10-digit Mobile Number">
 
   <select id="service">
     <option value="">Select Service</option>
-    <option>Grocery</option>
-    <option>Vegetables</option>
-    <option>Fruits</option>
-    <option>Dairy</option>
+    <option value="Grocery">Grocery</option>
+    <option value="Vegetables">Vegetables</option>
+    <option value="Fruits">Fruits</option>
+    <option value="Dairy">Dairy</option>
   </select>
 
-  <input id="amount" placeholder="Bill Amount (₹)">
+  <input type="number" id="amount" placeholder="Bill Amount (₹)">
 
-  <button type="button" onclick="generateBill()">Generate Bill</button>
-
-  <!-- BILL PREVIEW -->
-  <div id="bill">
-    <div class="bill-card" id="billContent">
-      <h2>Sekhar Store</h2>
-      <p>👤 <span id="bName"></span></p>
-      <p>🛒 <span id="bService"></span></p>
-      <p>💰 ₹<span id="bAmount"></span></p>
-      <p>🙏 Thank you for shopping with us</p>
-      <p>⭐ Please leave a Google review</p>
-    </div>
-
-    <button type="button" onclick="downloadImage()">📥 Download Bill Image</button>
-  </div>
+  <button type="button" onclick="sendWhatsApp()">Send WhatsApp</button>
 </div>
 
-<canvas id="canvas"></canvas>
-
 <script>
-function generateBill() {
-  const nameVal = document.getElementById("name").value.trim();
-  const phoneVal = document.getElementById("phone").value.trim();
-  const serviceVal = document.getElementById("service").value;
-  const amountVal = document.getElementById("amount").value.trim();
+function sendWhatsApp() {
+  const name = document.getElementById("name").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const service = document.getElementById("service").value;
+  const amount = document.getElementById("amount").value.trim();
 
-  if (!nameVal || !phoneVal || !serviceVal || !amountVal) {
+  if (!name || !phone || !service || !amount) {
     alert("Please fill all details");
     return;
   }
 
-  document.getElementById("bName").innerText = nameVal;
-  document.getElementById("bService").innerText = serviceVal;
-  document.getElementById("bAmount").innerText = amountVal;
+  const message =
+    "Hi " + name + "\n\n" +
+    "Service: " + service + "\n" +
+    "Bill Amount: ₹" + amount + "\n\n" +
+    "Thank you for shopping with Sekhar Store.";
 
-  document.getElementById("bill").style.display = "block";
-}
+  const url =
+    "https://wa.me/91" + phone +
+    "?text=" + encodeURIComponent(message);
 
-function downloadImage() {
-  const canvas = document.getElementById("canvas");
-  const ctx = canvas.getContext("2d");
+  const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
 
-  const width = 360;
-  const height = 220;
-
-  canvas.width = width;
-  canvas.height = height;
-
-  // Background
-  ctx.fillStyle = "#25D366";
-  ctx.fillRect(0, 0, width, height);
-
-  // Text
-  ctx.fillStyle = "#ffffff";
-  ctx.font = "bold 20px Arial";
-  ctx.fillText("Sekhar Store", 20, 35);
-
-  ctx.font = "16px Arial";
-  ctx.fillText("Name: " + document.getElementById("bName").innerText, 20, 70);
-  ctx.fillText("Service: " + document.getElementById("bService").innerText, 20, 100);
-  ctx.fillText("Amount: ₹" + document.getElementById("bAmount").innerText, 20, 130);
-
-  ctx.fillText("Thank you for shopping!", 20, 165);
-
-  const img = canvas.toDataURL("image/png");
-
-  const link = document.createElement("a");
-  link.href = img;
-  link.download = "bill.png";
-  link.click();
+  if (isMobile) {
+    window.location.href = url;
+  } else {
+    window.open(url, "_blank");
+  }
 }
 </script>
 
