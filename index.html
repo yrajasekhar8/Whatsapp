@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>WhatsApp Bill Generator</title>
+<title>Bill Generator</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
@@ -11,22 +11,27 @@ body {
   background: #f4f6f8;
   padding: 20px;
 }
+
 .container {
   max-width: 420px;
-  background: #fff;
-  padding: 20px;
   margin: auto;
+  background: #ffffff;
+  padding: 20px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
+
 h3 {
   text-align: center;
 }
+
 input, select, button {
   width: 100%;
   padding: 10px;
   margin-top: 10px;
+  font-size: 14px;
 }
+
 button {
   background: #25D366;
   color: white;
@@ -34,13 +39,17 @@ button {
   font-weight: bold;
   cursor: pointer;
 }
+
 button.secondary {
   background: #007bff;
 }
+
 #bill {
   display: none;
   margin-top: 20px;
 }
+
+/* Bill preview */
 .bill-card {
   background: linear-gradient(135deg, #25D366, #128C7E);
   color: white;
@@ -48,16 +57,16 @@ button.secondary {
   border-radius: 12px;
   text-align: center;
 }
+
 .bill-card h2 {
-  margin: 5px 0;
+  margin: 6px 0;
 }
+
 .bill-card p {
   margin: 6px 0;
   font-size: 15px;
 }
-.actions {
-  margin-top: 10px;
-}
+
 canvas {
   display: none;
 }
@@ -84,92 +93,74 @@ canvas {
 
   <button type="button" onclick="generateBill()">Generate Bill</button>
 
-  <!-- Bill Preview -->
+  <!-- BILL PREVIEW -->
   <div id="bill">
     <div class="bill-card" id="billContent">
-      <h2>🏪 Sekhar Store</h2>
+      <h2>Sekhar Store</h2>
       <p>👤 <span id="bName"></span></p>
       <p>🛒 <span id="bService"></span></p>
       <p>💰 ₹<span id="bAmount"></span></p>
-      <p>🙏 Thank you for shopping with us!</p>
+      <p>🙏 Thank you for shopping with us</p>
       <p>⭐ Please leave a Google review</p>
     </div>
 
-    <div class="actions">
-      <button type="button" onclick="downloadImage()">📥 Download Bill Image</button>
-      <button type="button" class="secondary" onclick="openWhatsApp()">🟢 Open WhatsApp</button>
-    </div>
+    <button type="button" onclick="downloadImage()">📥 Download Bill Image</button>
   </div>
 </div>
 
 <canvas id="canvas"></canvas>
 
 <script>
-let billImageData = "";
-
 function generateBill() {
-  const nameVal = name.value.trim();
-  const phoneVal = phone.value.trim();
-  const serviceVal = service.value;
-  const amountVal = amount.value.trim();
+  const nameVal = document.getElementById("name").value.trim();
+  const phoneVal = document.getElementById("phone").value.trim();
+  const serviceVal = document.getElementById("service").value;
+  const amountVal = document.getElementById("amount").value.trim();
 
   if (!nameVal || !phoneVal || !serviceVal || !amountVal) {
     alert("Please fill all details");
     return;
   }
 
-  document.getElementById("bName").innerText = "Name: " + nameVal;
-  document.getElementById("bService").innerText = "Service: " + serviceVal;
+  document.getElementById("bName").innerText = nameVal;
+  document.getElementById("bService").innerText = serviceVal;
   document.getElementById("bAmount").innerText = amountVal;
 
   document.getElementById("bill").style.display = "block";
-
-  setTimeout(createImage, 300);
 }
 
-function createImage() {
-  const card = document.getElementById("billContent");
+function downloadImage() {
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
 
-  const width = card.offsetWidth;
-  const height = card.offsetHeight;
+  const width = 360;
+  const height = 220;
 
   canvas.width = width;
   canvas.height = height;
 
+  // Background
   ctx.fillStyle = "#25D366";
   ctx.fillRect(0, 0, width, height);
 
-  ctx.fillStyle = "#fff";
+  // Text
+  ctx.fillStyle = "#ffffff";
   ctx.font = "bold 20px Arial";
-  ctx.fillText("🧾 Sekhar Store", 20, 35);
+  ctx.fillText("Sekhar Store", 20, 35);
 
   ctx.font = "16px Arial";
-  ctx.fillText("👤 " + bName.innerText, 20, 70);
-  ctx.fillText("🛒 " + bService.innerText, 20, 100);
-  ctx.fillText("💰 ₹" + bAmount.innerText, 20, 130);
+  ctx.fillText("Name: " + document.getElementById("bName").innerText, 20, 70);
+  ctx.fillText("Service: " + document.getElementById("bService").innerText, 20, 100);
+  ctx.fillText("Amount: ₹" + document.getElementById("bAmount").innerText, 20, 130);
 
-  ctx.fillText("🙏 Thank you for shopping with us!", 20, 170);
-  ctx.fillText("⭐ Please leave a Google review", 20, 200);
+  ctx.fillText("Thank you for shopping!", 20, 165);
 
-  billImageData = canvas.toDataURL("image/png");
-}
+  const img = canvas.toDataURL("image/png");
 
-function downloadImage() {
-  if (!billImageData) return alert("Generate bill first");
-  const a = document.createElement("a");
-  a.href = billImageData;
-  a.download = "bill.png";
-  a.click();
-}
-
-function openWhatsApp() {
-  const text = "Hi 😊 Please find your bill attached.";
-  const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
-  const url = `https://wa.me/91${phone.value}?text=${encodeURIComponent(text)}`;
-
-  isMobile ? window.location.href = url : window.open(url, "_blank");
+  const link = document.createElement("a");
+  link.href = img;
+  link.download = "bill.png";
+  link.click();
 }
 </script>
 
