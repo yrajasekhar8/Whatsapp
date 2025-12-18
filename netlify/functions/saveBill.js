@@ -32,14 +32,17 @@ exports.handler = async (event) => {
   const googleReviewLink = "https://g.page/r/XXXXXXX/review";
 
   const message =
-    `🙏 Hi ${name},\n\n` +
-    `🧾 *Service*: ${service}\n` +
-    `💰 *Bill Amount*: ₹${amount}\n\n` +
-    `Thank you for choosing *Sekhar Store* 🏪\n` +
-    `We truly appreciate your support 😊\n\n` +
-    `⭐ Please share your Google review:\n` +
+    `Hi ${name},\n\n` +
+    `*Bill Details*\n` +
+    `------------------\n` +
+    `Service : ${service}\n` +
+    `Amount  : Rs. ${amount}\n\n` +
+    `Thank you for choosing *Sekhar Store* :)\n` +
+    `We truly appreciate your support.\n\n` +
+    `★ Please share your Google review ★\n` +
     `${googleReviewLink}\n\n` +
-    `Have a great day! 🌸`;
+    `Have a great day! :)`; +
+      `Have a great day! 🌸`;
 
   return {
     statusCode: 200,
