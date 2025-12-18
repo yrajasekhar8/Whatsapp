@@ -63,7 +63,7 @@
 </div>
 
 <script>
-function sendWhatsApp() {
+async function sendWhatsApp() {
   const name = document.getElementById("name").value.trim();
   const phone = document.getElementById("phone").value.trim();
   const service = document.getElementById("service").value;
@@ -74,25 +74,29 @@ function sendWhatsApp() {
     return;
   }
 
-  const message =
-    "Hi " + name + "\n\n" +
-    "Service: " + service + "\n" +
-    "Bill Amount: ₹" + amount + "\n\n" +
-    "Thank you for shopping with Sekhar Store.";
+  const response = await fetch("/.netlify/functions/saveBill", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, phone, service, amount })
+  });
 
-  const url =
-    "https://wa.me/91" + phone +
-    "?text=" + encodeURIComponent(message);
+  const result = await response.json();
+
+  if (!result.whatsapp) {
+    alert("Failed to open WhatsApp");
+    return;
+  }
 
   const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
 
   if (isMobile) {
-    window.location.href = url;
+    window.location.href = result.whatsapp;
   } else {
-    window.open(url, "_blank");
+    window.open(result.whatsapp, "_blank");
   }
 }
 </script>
+
 
 </body>
 </html>
