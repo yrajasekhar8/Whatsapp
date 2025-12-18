@@ -30,11 +30,15 @@ exports.handler = async (event) => {
 
     if (error) throw error;
 
-    const message =
-      `Hi ${name},\n\n` +
-      `Service: ${service}\n` +
-      `Bill Amount: ₹${amount}\n\n` +
-      `Thank you for shopping with us.\n- Sekhar Store`;
+  const message =
+    `🙏 Hi ${name},\n\n` +
+    `🧾 *Service*: ${service}\n` +
+    `💰 *Bill Amount*: ₹${amount}\n\n` +
+    `Thank you for choosing *Sekhar Store* 🏪\n` +
+    `We truly appreciate your support 😊\n\n` +
+    `⭐ Please share your Google review:\n` +
+    `${googleReviewLink}\n\n` +
+    `Have a great day! 🌸`;
 
     return {
       statusCode: 200,
