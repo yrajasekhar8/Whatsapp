@@ -42,7 +42,7 @@ exports.handler = async (event) => {
     `★ Please share your Google review ★\n` +
     `${googleReviewLink}\n\n` +
     `Have a great day! :)`; +
-      `Have a great day! 🌸`;
+      `Have a great day! 🌸 Sekhar`;
 
   return {
     statusCode: 200,
