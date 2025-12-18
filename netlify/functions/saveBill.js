@@ -29,7 +29,7 @@ exports.handler = async (event) => {
     ]);
 
     if (error) throw error;
-
+  const googleReviewLink = "https://g.page/r/XXXXXXX/review"; // ← replace with your real link
   const message =
     `🙏 Hi ${name},\n\n` +
     `🧾 *Service*: ${service}\n` +
