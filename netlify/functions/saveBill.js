@@ -29,7 +29,8 @@ exports.handler = async (event) => {
     ]);
 
     if (error) throw error;
-  const googleReviewLink = "https://g.page/r/XXXXXXX/review"; // ← replace with your real link
+  const googleReviewLink = "https://g.page/r/XXXXXXX/review";
+
   const message =
     `🙏 Hi ${name},\n\n` +
     `🧾 *Service*: ${service}\n` +
@@ -39,6 +40,7 @@ exports.handler = async (event) => {
     `⭐ Please share your Google review:\n` +
     `${googleReviewLink}\n\n` +
     `Have a great day! 🌸`;
+
 
     return {
       statusCode: 200,
